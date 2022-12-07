@@ -1,6 +1,6 @@
 --- Load libraries from the internets with caching to disk
-local USER_AGENT = "Ficsit-Appliances/Deps https://github.com/abesto/ficsit-appliances"
-local REPOSITORY = "abesto/ficsit-appliances"
+local USER_AGENT = "Ficsit-Appliances/Deps https://github.com/Terje72/ficsit-appliances"
+local REPOSITORY = "Terje72/ficsit-appliances"
 
 local function pci(cls)
     local device = computer.getPCIDevices(findClass(cls))[1]
@@ -89,7 +89,7 @@ function Deps:ensure_downloaded(input, input_version)
     local libname, version, url, cachepath = self:resolve(input, input_version)
     if version == "main" or not filesystem.exists(cachepath) then
         print("[Deps] Downloading " .. libname .. "\n       version " .. version .. "\n       from " .. url ..
-                  "\n       to " .. cachepath)
+            "\n       to " .. cachepath)
         mkdir_p(string.gsub(cachepath, "/[^/]+$", ""))
         self:download(url, cachepath)
     else
