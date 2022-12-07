@@ -8,11 +8,11 @@ local TablePrinter = Deps("lib/table_printer")
 local colors = Deps("lib/colors")
 
 CONFIG = CONFIG or CONFIG {
-    main_display = "7FC05BBE4B398CD7430CFDAF66DDCC17",
+    main_display = "DF30A4BB4EB3755EEF429BA7FC6B405D",
     history_file = "/storage_display/history.binser",
     retention = 650,
     frequency = 25,
-    rates = {{"30s", 30}, {"5m", 5 * 60}, {"10m", 10 * 60}}
+    rates = { { "30s", 30 }, { "5m", 5 * 60 }, { "10m", 10 * 60 } }
 }
 
 local ItemTypeRegistry = class("ItemTypeRegistry")
@@ -20,6 +20,7 @@ function ItemTypeRegistry:initialize()
     self.entries = {}
     self.lookup = {}
 end
+
 function ItemTypeRegistry:register(item_type)
     if self.lookup[item_type.name] == nil then
         table.insert(self.entries, {
@@ -30,12 +31,15 @@ function ItemTypeRegistry:register(item_type)
     end
     return self.lookup[item_type.name]
 end
+
 function ItemTypeRegistry:get(index)
     return self.entries[index]
 end
+
 function ItemTypeRegistry:_serialize()
     return self.entries
 end
+
 function ItemTypeRegistry._deserialize(entries)
     local registry = ItemTypeRegistry:new()
     registry.entries = entries
@@ -44,6 +48,7 @@ function ItemTypeRegistry._deserialize(entries)
     end
     return registry
 end
+
 binser.registerClass(ItemTypeRegistry)
 local item_type_registry = ItemTypeRegistry:new()
 
@@ -55,7 +60,7 @@ end
 function DB:entry(item_type)
     local item_type_index = item_type_registry:register(item_type)
     if self.entries[item_type_index] == nil then
-        self.entries[item_type_index] = DBEntry:new{
+        self.entries[item_type_index] = DBEntry:new {
             item_type_index = item_type_index
         }
     end
@@ -96,7 +101,7 @@ function History:initialize(o)
 end
 
 function History:record(db, duration)
-    table.insert(self.entries, HistoryEntry:new{
+    table.insert(self.entries, HistoryEntry:new {
         db = db,
         duration = duration
     })
@@ -149,19 +154,20 @@ function History:_serialize()
     for i, history_entry in pairs(self.entries) do
         local raw_db_entries = {}
         for j, db_entry in pairs(history_entry.db.entries) do
-            raw_db_entries[j] = {db_entry.count, db_entry.storage_capacity, db_entry.item_type_index}
+            raw_db_entries[j] = { db_entry.count, db_entry.storage_capacity, db_entry.item_type_index }
         end
-        raw_history_entries[i] = {history_entry.time, history_entry.duration, raw_db_entries}
+        raw_history_entries[i] = { history_entry.time, history_entry.duration, raw_db_entries }
     end
     return raw_history_entries
 end
+
 function History._deserialize(raw_history_entries)
     local now = computer.millis() / 1000
     local last = raw_history_entries[#raw_history_entries][1]
 
     local h = History:new()
     for i, raw_history_entry in pairs(raw_history_entries) do
-        local history_entry = HistoryEntry:new{
+        local history_entry = HistoryEntry:new {
             -- Timekeeping is messy (see https://github.com/Panakotta00/FicsIt-Networks/issues/200),
             -- so pretend that the last snapshot happened NOW.
             time = now - (last - raw_history_entry[1]),
@@ -169,7 +175,7 @@ function History._deserialize(raw_history_entries)
             db = DB:new()
         }
         for j, raw_db_entry in pairs(raw_history_entry[3]) do
-            local db_entry = DBEntry:new{
+            local db_entry = DBEntry:new {
                 count = raw_db_entry[1],
                 storage_capacity = raw_db_entry[2],
                 item_type_index = raw_db_entry[3]
@@ -180,6 +186,7 @@ function History._deserialize(raw_history_entries)
     end
     return h
 end
+
 binser.registerClass(History)
 
 HistoryEntry = class("HistoryEntry")
@@ -204,8 +211,8 @@ local function count_items(db, container)
                     db_entry = db:entry(stack.item.type)
                 elseif db_entry:item_type().name ~= stack.item.type.name then
                     computer.panic("ERROR: multiple items in container " .. container:getHash() .. " inventory " ..
-                                       inventory:getHash() .. ": " .. db_entry:item_type().name .. " and " ..
-                                       stack.item.type.name)
+                        inventory:getHash() .. ": " .. db_entry:item_type().name .. " and " ..
+                        stack.item.type.name)
                 end
                 db_entry:record_items(stack.count)
             end
@@ -224,11 +231,11 @@ local function display_status(gpu, y, status)
 end
 
 local function display(history, highlight, gpu, status)
-    local headings = {"NAME", "COUNT", "CAPACITY", "FILL%"}
+    local headings = { "NAME", "COUNT", "CAPACITY", "FILL%" }
     for _, rate in pairs(CONFIG.rates) do
         table.insert(headings, "RATE@" .. rate[1])
     end
-    local table_printer = TablePrinter:new{
+    local table_printer = TablePrinter:new {
         headings = headings
     }
     local width = #status
@@ -256,7 +263,7 @@ local function display(history, highlight, gpu, status)
             else
                 color = colors.red
             end
-            local cells = {entry:item_type().name, entry.count, entry.storage_capacity, entry:get_fill_percent()}
+            local cells = { entry:item_type().name, entry.count, entry.storage_capacity, entry:get_fill_percent() }
             for _, rate in pairs(CONFIG.rates) do
                 table.insert(cells, string.format("%s/m", history:rate_per_minute(entry:item_type(), rate[2])))
             end
@@ -343,7 +350,7 @@ local function main()
         end
     end
     if history == nil then
-        history = History:new{
+        history = History:new {
             retention = CONFIG.retention,
             frequency = CONFIG.frequency
         }
@@ -364,7 +371,7 @@ local function main()
         local e, s, x, y = event.pull(1.0)
         while e ~= nil do
             if e == "OnMouseMove" then
-                highlight = {x, y}
+                highlight = { x, y }
                 if highlight_changed(last_highlight, highlight) then
                     dirty = true
                     last_highlight = highlight
