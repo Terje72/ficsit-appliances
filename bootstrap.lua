@@ -1,6 +1,6 @@
-BOOTSTRAP_APP = {"apps/shellsort_example", "7fd3600"} -- Update this for the location / commit of the app you want to run on this computer
+BOOTSTRAP_APP = { "apps/shellsort_example", "7fd3600" } -- Update this for the location / commit of the app you want to run on this computer
 DEPS_DISK_UUID = nil -- Replace this with the disk UUID to use for the dependency cache if you have more than one disks in the system
-BOOTSTRAP_REPO = "abesto/ficsit-appliances"
+BOOTSTRAP_REPO = "Terje72/ficsit-appliances"
 DEPS_COMMIT = "455cc65"
 
 -- YOU SHOULD NOT HAVE TO EDIT ANYTHING BELOW THIS LINE --
@@ -54,4 +54,5 @@ local function _bootstrap()
     print("[bootstrap] Starting: " .. target .. " @ " .. version)
     app()
 end
+
 _bootstrap()
