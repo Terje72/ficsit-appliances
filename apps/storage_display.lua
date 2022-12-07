@@ -337,7 +337,7 @@ end
 local function main()
     local containers = component.proxy(component.findComponent(findClass("Build_StorageContainerMk2_C")))
     local gpu = hw.gpu()
-    local main_display = component.proxy(CONFIG.main_display)
+    local main_display = component.proxy("DF30A4BB4EB3755EEF429BA7FC6B405D")
 
     local history = nil
     if fs.exists(CONFIG.history_file) then
