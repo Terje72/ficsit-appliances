@@ -35,5 +35,5 @@ function sleep(n)
 end
 
 FindGPU()
-sleeo(1)
+sleep(1)
 
