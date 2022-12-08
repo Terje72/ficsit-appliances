@@ -12,7 +12,7 @@ function sleep(n)
     while computer.time() - t0 <= n do end
 end
 
-FindGPU()
+function FindGPU()
     gpu:setForeground(0, 0, 0, 1)
     gpu:fill(0, 0, w, h, " ")
     gpu:flush()
@@ -26,3 +26,5 @@ function sleep(n)
 end
 
 FindGPU()
+sleeo(1)
+
